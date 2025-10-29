@@ -1,4 +1,4 @@
-name: Build firmware
+name: Build firmware for multiple routers
 
 on:
   workflow_dispatch:
