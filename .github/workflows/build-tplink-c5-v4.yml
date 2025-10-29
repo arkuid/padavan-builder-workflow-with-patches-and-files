@@ -51,7 +51,7 @@ jobs:
         if [ -d "patches" ] && [ "$(ls -A patches/tplink-c5-v4-16M/*.patch 2>/dev/null)" ]; then
           echo "Applying patches..."
           cd padavan-ng
-          for patch_file in ../patches/tplink-c5-v4-16M*.patch; do
+          for patch_file in ../patches/tplink-c5-v4-16M/*.patch; do
             echo "Applying patch: $(basename $patch_file)"
             if git apply --check "$patch_file" 2>/dev/null; then
               git apply "$patch_file"
