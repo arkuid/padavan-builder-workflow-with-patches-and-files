@@ -39,7 +39,7 @@ jobs:
         git -C padavan-ng checkout "$PADAVAN_COMMIT"
         wget -qO- "$PADAVAN_TOOLCHAIN_URL" | tar -C padavan-ng --zstd -xf -
 
-    - name: Detect current zapret version and apply patch
+    - name: Update zapret version
       run: |
         NFQWS_MAKEFILE="padavan-ng/trunk/user/nfqws/Makefile"
         
@@ -56,27 +56,16 @@ jobs:
         echo "Current zapret version: $CURRENT_ZAPRET_VERSION"
         echo "Target zapret version: $ZAPRET_VERSION"
         
-        # Создаем патч для обновления версии zapret
-        cat > zapret_version.patch << EOF
---- a/trunk/user/nfqws/Makefile
-+++ b/trunk/user/nfqws/Makefile
-@@ -1,4 +1,4 @@
--SRC_VER = $CURRENT_ZAPRET_VERSION
-+SRC_VER = $ZAPRET_VERSION
- SRC_NAME = zapret-\$(SRC_VER)
- SRC_URL = https://github.com/bol-van/zapret/archive/refs/tags/v\$(SRC_VER).tar.gz
- SRC_URL_SH = https://github.com/nilabsent/zapretsh/archive/refs/heads/main.tar.gz
-EOF
-
-        # Применяем патч
-        cd padavan-ng
-        if patch -p1 --forward < ../zapret_version.patch; then
+        # Обновляем версию с помощью sed
+        sed -i "s/^SRC_VER = $CURRENT_ZAPRET_VERSION/SRC_VER = $ZAPRET_VERSION/" "$NFQWS_MAKEFILE"
+        
+        # Проверяем что замена прошла успешно
+        if grep -q "^SRC_VER = $ZAPRET_VERSION" "$NFQWS_MAKEFILE"; then
           echo "✓ Zapret version updated from $CURRENT_ZAPRET_VERSION to $ZAPRET_VERSION"
         else
-          echo "⚠ Failed to apply zapret version patch"
+          echo "⚠ Failed to update zapret version"
           exit 1
         fi
-        cd ..
 
     - name: Clean old zapret files
       run: |
