@@ -70,10 +70,11 @@ EOF
 
         # Применяем патч
         cd padavan-ng
-        if patch -p1 --forward < ../zapret_version.patch || true; then
+        if patch -p1 --forward < ../zapret_version.patch; then
           echo "✓ Zapret version updated from $CURRENT_ZAPRET_VERSION to $ZAPRET_VERSION"
         else
-          echo "⚠ Patch application had issues, but continuing..."
+          echo "⚠ Failed to apply zapret version patch"
+          exit 1
         fi
         cd ..
 
